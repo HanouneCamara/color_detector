@@ -14,6 +14,9 @@ def main():
                 break
 
             cv2.imshow("Flux Vidéo", frame)
+            
+            if cv2.getWindowProperty("Flux Vidéo", cv2.WND_PROP_VISIBLE) < 1:
+                break
 
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'):
