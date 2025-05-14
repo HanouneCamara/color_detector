@@ -16,4 +16,3 @@ def read_frame(cap):
 def close_camera(cap):
     cap.release()
     cv2.destroyAllWindows()
-    
