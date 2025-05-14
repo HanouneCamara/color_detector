@@ -1,5 +1,25 @@
 import cv2
+import webcolors
 from camera import open_camera, read_frame, close_camera
+
+def closest_color(rgb):
+    # Trouver la couleur nommée la plus proche
+    min_colors = {}
+    for key, name in webcolors.CSS3_HEX_TO_NAMES.items():
+        r_c, g_c, b_c = webcolors.hex_to_rgb(key)
+        rd = (r_c - rgb[0]) ** 2
+        gd = (g_c - rgb[1]) ** 2
+        bd = (b_c - rgb[2]) ** 2
+        min_colors[(rd + gd + bd)] = name
+    return min_colors[min(min_colors.keys())]
+
+def get_color_name(rgb):
+    try:
+        color_name = webcolors.rgb_to_name(rgb)
+    except ValueError:
+        color_name = closest_color(rgb)
+    return color_name
+        
 
 def main():
     try:
@@ -22,13 +42,16 @@ def main():
             b, g, r = frame[center_y, center_x]
             color_text = f"B:{b} G:{g} R:{r}"
 
+            # Obtenir le nom de la couleur
+            color_name = get_color_name((r, g, b))
+            
             # Dessiner le carré coloré
             cv2.rectangle(frame, (10, 10), (60, 60), (int(b), int(g), int(r)), -1)
 
-            # Afficher les valeurs RGB
+            # Afficher les valeurs RGB et le nom de la couleur
             cv2.putText(
                 frame,
-                color_text,
+                f"{color_text} - {color_name}",
                 (70, 40),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.7,
