@@ -1,25 +1,27 @@
 import cv2
 import webcolors
+from webcolors import IntegerRGB
 from camera import open_camera, read_frame, close_camera
 
-def closest_color(rgb):
-    # Trouver la couleur nommée la plus proche
+def closest_color(requested_rgb):
     min_colors = {}
-    for key, name in webcolors.CSS3_HEX_TO_NAMES.items():
-        r_c, g_c, b_c = webcolors.hex_to_rgb(key)
-        rd = (r_c - rgb[0]) ** 2
-        gd = (g_c - rgb[1]) ** 2
-        bd = (b_c - rgb[2]) ** 2
+    for name in webcolors.names():
+        r_c, g_c, b_c = webcolors.name_to_rgb(name)
+        rd = (r_c - requested_rgb[0]) ** 2
+        gd = (g_c - requested_rgb[1]) ** 2
+        bd = (b_c - requested_rgb[2]) ** 2
         min_colors[(rd + gd + bd)] = name
     return min_colors[min(min_colors.keys())]
 
+
 def get_color_name(rgb):
     try:
-        color_name = webcolors.rgb_to_name(rgb)
+        # Convertir le tuple RGB standard en IntegerRGB pour compatibilité
+        rgb_obj = IntegerRGB(*rgb)
+        color_name = webcolors.rgb_to_name(rgb_obj)
     except ValueError:
         color_name = closest_color(rgb)
     return color_name
-        
 
 def main():
     try:
